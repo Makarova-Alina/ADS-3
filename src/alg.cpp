@@ -20,8 +20,7 @@ std::string infx2pstfx(std::string inf) {
         if ((inf[i] >= '0') && (inf[i] <= '9')) {
             str = str + inf[i];
             str = str + " ";
-        } else if ((stack.empty()) || (inf[i] == '(')
-                 || (priorit(inf[i] > priorit(stack.top())))) {
+        } else if ((stack.empty()) || (inf[i] == '(') || (priorit(inf[i] > priorit(stack.top())))) {
             stack.push(inf[i]);
         } else if (inf[i] == ')') {
             while (stack.top() != '(') {
@@ -54,7 +53,6 @@ int eval(std::string pst) {
   // добавьте сюда нужный код
   return 0;
   std::stack<char> stack;
-  int resultat;
   for (int i = 0; i < pst.length(); i++) {
     if ((pst[i] >= '0') && (pst[i] <= '9')) {
       stack.push(pst[i] - '0');
@@ -63,16 +61,12 @@ int eval(std::string pst) {
       stack.pop();
       int y1 = stack.top();
       stack.pop();
-      if (pst[i] == '+')
-        stack.push(y1 + y2);
-      if (pst[i] == '-')
-        stack.push(y1 - y2);
-      if (pst[i] == '*')
-        stack.push(y1 * y2);
-      if (pst[i] == '/')
-        stack.push(y1 / y2);
+      if (pst[i] == '+') stack.push(y1 + y2);
+        else if (pst[i] == '-') stack.push(y1 - y2);
+        else if (pst[i] == '*') stack.push(y1 * y2);
+        else
+            stack.push(y1 / y2);
     }
   }
-  resultat = stack.top();
-  return resultat;
+  return stack.top();
 }
