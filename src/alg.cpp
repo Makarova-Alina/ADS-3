@@ -1,7 +1,6 @@
 // Copyright 2021 NNTU-CS
 #include <string>
 #include "tstack.h"
-#include <stack>
 
 int priorit(char x) {
     if ((x == '+') || (x == '-'))
@@ -14,37 +13,38 @@ int priorit(char x) {
 std::string infx2pstfx(std::string inf) {
   // добавьте сюда нужный код
   return std::string("");
-  std::stack<char> stack;
+    TStack<char> stack;
     std::string str;
     for (int i = 0; i < inf.length(); i++) {
         if ((inf[i] >= '0') && (inf[i] <= '9')) {
-            str = str + inf[i];
-            str = str + " ";
-        } else if ((stack.empty()) || (inf[i] == '(') || (priorit(inf[i] > priorit(stack.top())))) {
+            str += inf[i];
+            str += ' ';
+        } else if (stack.isEmpty())
+            || (inf[i] == '(')
+            || (priorit(inf[i]) > priorit(stack.get()))) {
             stack.push(inf[i]);
         } else if (inf[i] == ')') {
-            while (stack.top() != '(') {
-                str = str + stack.top();
-                str = str + ' ';
+            char tp = stack.get();
+            while (tp != '(') {
+                str += tp;
+                str += ' ';
                 stack.pop();
             }
             stack.pop();
         } else {
-            while (!stack.empty() && (priorit(stack.top()) >= priorit(inf[i]))) {
-                str = str + stack.top();
-                str = str + ' ';
+            while (!stack.isEmpty() && (priorit(stack.get()) >= priorit(inf[i]))) {
+                str += stack.get();
+                str += ' ';
                 stack.pop();
             }
             stack.push(inf[i]);
         }
     }
-     if (!stack.empty()) {
-         while (!stack.empty()) {
-            str = str + stack.top();
-            str = str + ' ';
+    while (!stack.isEmpty()) {
+            str += stack.get();
+            str += ' ';
             stack.pop();
-         }
-     }
+    }
     str.pop_back();
     return str;
 }
@@ -52,14 +52,14 @@ std::string infx2pstfx(std::string inf) {
 int eval(std::string pst) {
   // добавьте сюда нужный код
   return 0;
-  std::stack<char> stack;
+  TStack<int> stack;
   for (int i = 0; i < pst.length(); i++) {
     if ((pst[i] >= '0') && (pst[i] <= '9')) {
       stack.push(pst[i] - '0');
     } else if (pst[i] != ' ') {
-      int y2 = stack.top();
+      int y2 = stack.get();
       stack.pop();
-      int y1 = stack.top();
+      int y1 = stack.get();
       stack.pop();
       if (pst[i] == '+') stack.push(y1 + y2);
         else if (pst[i] == '-') stack.push(y1 - y2);
