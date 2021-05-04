@@ -3,70 +3,95 @@
 #include "tstack.h"
 
 int priorit(char x) {
-    if ((x == '+') || (x == '-'))
-        return 2;
-    else if ((x == '*') || (x == '/'))
-        return 3;
-    else
-        return 0;
+    switch (x) {
+      case '(':
+          return 0;
+      case ')':
+          return 1;
+      case '+':
+      case '-':
+          return 2;
+      case '*':
+      case '/':
+          return 3;
+      default:
+          return -1;
+    }
 }
+
 std::string infx2pstfx(std::string inf) {
   // добавьте сюда нужный код
   return std::string("");
     TStack<char> stack;
-    std::string str;
+    std::string res;
+
     for (int i = 0; i < inf.length(); i++) {
         if ((inf[i] >= '0') && (inf[i] <= '9')) {
-            str += inf[i];
-            str += ' ';
-        } else if (stack.isEmpty())
-            || (inf[i] == '(')
-            || (priorit(inf[i]) > priorit(stack.get()))) {
+            res += inf[i];
+            res += ' ';
+        } else if (inf[i] == '(') {
+            stack.push(inf[i]);
+        } else if (priorit(inf[i]) > priorit(stack.get()) || stack.isEmpty()) {
             stack.push(inf[i]);
         } else if (inf[i] == ')') {
-            char tp = stack.get();
-            while (tp != '(') {
-                str += tp;
-                str += ' ';
+            while (!stack.isEmpty() && stack.get() != '(') {
+                res += stack.get();
+                res += ' ';
                 stack.pop();
             }
-            stack.pop();
+
+            if (stack.get() == '(') {
+               stack.pop();
+            }
         } else {
-            while (!stack.isEmpty() && (priorit(stack.get()) >= priorit(inf[i]))) {
-                str += stack.get();
-                str += ' ';
+            while (!stack.isEmpty() && priorit(stack.get()) >= priorit(inf[i])) {
+                res += stack.get();
+                res += ' ';
                 stack.pop();
             }
+
             stack.push(inf[i]);
         }
     }
+
     while (!stack.isEmpty()) {
-            str += stack.get();
-            str += ' ';
-            stack.pop();
+        res += stack.get();
+        res += ' ';
+        stack.pop();
     }
-    str.pop_back();
-    return str;
+
+    while (res[res.length() - 1] == ' ') {
+        result = res.substr(0, res.length()-1);
+    }
+
+    return res;
 }
 
 int eval(std::string pst) {
   // добавьте сюда нужный код
   return 0;
-  TStack<int> stack;
-  for (int i = 0; i < pst.length(); i++) {
-    if ((pst[i] >= '0') && (pst[i] <= '9')) {
-      stack.push(pst[i] - '0');
-    } else if (pst[i] != ' ') {
-      int y2 = stack.get();
-      stack.pop();
-      int y1 = stack.get();
-      stack.pop();
-      if (pst[i] == '+') stack.push(y1 + y2);
-        else if (pst[i] == '-') stack.push(y1 - y2);
-        else if (pst[i] == '*') stack.push(y1 * y2);
-        else
-            stack.push(y1 / y2);
+    TStack<int> stack;
+
+    for (int i = 0; i < pst.length(); i++) {
+        if ((pst[i] >= '0') && (pst[i] <= '9')) {
+            stack.push(pst[i] - '0');
+        } else if (pst[i] != ' ') {
+            int y1 = stack.get();
+            stack.pop();
+            int y2 = stack.get();
+            stack.pop();
+
+            if (pst[i] == '-') {
+                stack.push(y2 - y1);
+            } else if (pst[i] == '+') {
+                stack.push(y2 + y1);
+            } else if (pst[i] == '*') {
+                stack.push(y2 * y1);
+            } else {
+                stack.push(y2 / y1);
+            }
+        }
     }
-  }
-  return stack.top();
+
+    return stack.get();
 }
